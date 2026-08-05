@@ -1,6 +1,6 @@
 # SPEC 01 — Feed de la guardería como home `/`
 
-> **Status:** Draft
+> **Status:** Aprobado
 > **Depends on:** —
 > **Date:** 2026-08-05
 > **Objective:** Replicar el mockup `references/pantallas/feed.dc.html` como página home `/` con estilado pixel-perfect, sin autenticación ni base de datos, usando mock data y una estructura de componentes preparada para reutilización.
@@ -56,14 +56,24 @@ export const badgeConfig: Record<
   PostType,
   { bg: string; dot: string; text: string; label: string }
 > = {
-  achievement: { bg: "#CFEBD8", dot: "#3E9B6C", text: "#3E9B6C", label: "LOGRO" },
+  achievement: {
+    bg: "#CFEBD8",
+    dot: "#3E9B6C",
+    text: "#3E9B6C",
+    label: "LOGRO",
+  },
   activity: {
     bg: "#C7E7F1",
     dot: "#2E89A6",
     text: "#2E89A6",
     label: "ACTIVIDAD",
   },
-  announcement: { bg: "#CCD8F4", dot: "#4E72C8", text: "#4E72C8", label: "ANUNCIO" },
+  announcement: {
+    bg: "#CCD8F4",
+    dot: "#4E72C8",
+    text: "#4E72C8",
+    label: "ANUNCIO",
+  },
 };
 
 export const currentUser = {

@@ -1,26 +1,42 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Tokens del diseño (paleta crema/marrón + tipografías).
+   Con @theme inline, Tailwind genera utilidades bg-cream, text-ink,
+   border-border-warm, font-display, font-sans, etc. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-cream: #f6ecdf;
+  --color-surface: #fffdf9;
+  --color-ink: #3f362e;
+  --color-muted: #94887b;
+  --color-border-warm: #ece0d0;
+  --color-primary: #ee8164;
+  --color-primary-soft: #fbe3d8;
+  --color-accent: #d9583c;
+  --color-like: #e0654a;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-display: var(--font-fredoka);
+  --font-sans: var(--font-nunito);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #f6ecdf;
+  color: #3f362e;
+  font-family: var(--font-nunito);
+}
+
+/* Scrollbar custom acorde al mockup */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+::-webkit-scrollbar-track {
+  background: #f6ecdf;
+}
+::-webkit-scrollbar-thumb {
+  background: #e4d6c4;
+  border-radius: 9999px;
+  border: 3px solid #f6ecdf;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d8c5ac;
 }

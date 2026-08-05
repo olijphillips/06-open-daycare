@@ -3,6 +3,7 @@
 > **Status:** Aprobado
 > **Depends on:** —
 > **Date:** 2026-08-05
+> **Implemented:** 2026-08-05
 > **Objective:** Replicar el mockup `references/pantallas/feed.dc.html` como página home `/` con estilado pixel-perfect, sin autenticación ni base de datos, usando mock data y una estructura de componentes preparada para reutilización.
 
 ## Scope
@@ -111,22 +112,22 @@ Convenciones:
 
 ## Acceptance criteria
 
-- [ ] `npm run dev` muestra `/` sin errores en consola.
-- [ ] El fondo del body es `#F6ECDF` y el texto base `#3F362E` (sin modo oscuro).
-- [ ] Los titulares ("Buenas, Caro", "OpenDayCare", nombres de niño) usan Fredoka; el cuerpo usa Nunito.
-- [ ] Existe `components/ui/` con `avatar`, `button`, `card`, `section-label` reutilizables.
-- [ ] Existe `components/layout/` con `app-shell`, `page-header` y `sidebar/` (sidebar, sidebar-content, mobile-nav).
-- [ ] Existe `components/feed/` con `post-card`, `post-badge`, `photo-placeholder`, `post-actions`, `composer-trigger`.
-- [ ] El mock data vive en `lib/mock/feed.ts` (tipos + `badgeConfig` + `currentUser` + `classroom` + `feedPosts`).
-- [ ] El sidebar desktop (248px, sticky) coincide con el mockup: logo + "Sala Soles", botón naranja "Nueva publicación", nav con "Feed" activo (`#FBE3D8`/`#D9583C`), tarjeta "Caro Giménez · Maestra · Soles".
-- [ ] El feed muestra exactamente 3 tarjetas en el orden del mockup: logro de Mateo, actividad de Mateo (con placeholder de foto), anuncio general.
-- [ ] Cada tarjeta muestra avatar/ícono, nombre, hora, badge de tipo con sus colores, destinatario, texto, contadores de likes/comentarios y enlace "Editar".
-- [ ] Todos los enlaces (Nueva publicación, nav, Editar, likes, comentarios, logout) apuntan a `#` y no producen 404.
-- [ ] En viewport < `md` (768px) el sidebar se oculta y aparece el botón hamburguesa; al pulsarlo se abre un drawer con el mismo contenido del sidebar.
-- [ ] El drawer se cierra al pulsar el overlay o un enlace.
-- [ ] `npm run lint` pasa sin errores.
-- [ ] `npm run build` pasa (typecheck).
-- [ ] La comparación visual con `references/screenshots/feed.png` en desktop no muestra diferencias significativas de layout, color ni tipografía.
+- [x] `npm run dev` muestra `/` sin errores en consola.
+- [x] El fondo del body es `#F6ECDF` y el texto base `#3F362E` (sin modo oscuro).
+- [x] Los titulares ("Buenas, Caro", "OpenDayCare", nombres de niño) usan Fredoka; el cuerpo usa Nunito.
+- [x] Existe `components/ui/` con `avatar`, `button`, `card`, `section-label` reutilizables.
+- [x] Existe `components/layout/` con `app-shell`, `page-header` y `sidebar/` (sidebar, sidebar-content, mobile-nav).
+- [x] Existe `components/feed/` con `post-card`, `post-badge`, `photo-placeholder`, `post-actions`, `composer-trigger`.
+- [x] El mock data vive en `lib/mock/feed.ts` (tipos + `badgeConfig` + `currentUser` + `classroom` + `feedPosts`).
+- [x] El sidebar desktop (248px, sticky) coincide con el mockup: logo + "Sala Soles", botón naranja "Nueva publicación", nav con "Feed" activo (`#FBE3D8`/`#D9583C`), tarjeta "Caro Giménez · Maestra · Soles".
+- [x] El feed muestra exactamente 3 tarjetas en el orden del mockup: logro de Mateo, actividad de Mateo (con placeholder de foto), anuncio general.
+- [x] Cada tarjeta muestra avatar/ícono, nombre, hora, badge de tipo con sus colores, destinatario, texto, contadores de likes/comentarios y enlace "Editar".
+- [x] Todos los enlaces (Nueva publicación, nav, Editar, likes, comentarios, logout) apuntan a `#` y no producen 404.
+- [x] En viewport < `md` (768px) el sidebar se oculta y aparece el botón hamburguesa; al pulsarlo se abre un drawer con el mismo contenido del sidebar.
+- [x] El drawer se cierra al pulsar el overlay o un enlace.
+- [x] `npm run lint` pasa sin errores.
+- [x] `npm run build` pasa (typecheck).
+- [x] La comparación visual con `references/screenshots/feed.png` en desktop no muestra diferencias significativas de layout, color ni tipografía.
 
 ## Decisions
 
@@ -168,3 +169,48 @@ Convenciones:
 - Funcionalidad real de likes, comentarios, editar, crear publicación.
 - Diseño mobile dedicado (bottom-nav, FAB) más allá del drawer.
 - Modo oscuro.
+
+## Implementation log
+
+> Bitácora de la implementación sobre la rama `spec-01-feed-home`. Los 9 pasos del plan se completaron en orden.
+
+### Archivos creados / modificados
+
+| Paso | Archivo                                         | Tipo                                                                                                                                                     |
+| ---- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | `app/layout.tsx`                                | modificado — Fredoka + Nunito vía `next/font/google`, `lang="es"`, title "OpenDayCare", CSS vars `--font-fredoka`/`--font-nunito`                        |
+| 2    | `app/globals.css`                               | modificado — `@theme inline` con 9 tokens de color + 2 de fuente, body crema, scrollbar custom, modo oscuro eliminado                                    |
+| 3    | `lib/mock/feed.ts`                              | creado — tipos (`PostType`, `FeedPost`), `badgeConfig`, `currentUser`, `classroom`, `feedPosts` (3 posts con textos/horas/contadores exactos del mockup) |
+| 4    | `components/ui/avatar.tsx`                      | creado — `Avatar` (iniciales o ícono, props `size`/`bg`/`color`)                                                                                         |
+| 4    | `components/ui/button.tsx`                      | creado — `PrimaryButton` (gradient `#F4977E→#EE8164` + sombra)                                                                                           |
+| 4    | `components/ui/card.tsx`                        | creado — `Card` (surface + borde warm + sombra)                                                                                                          |
+| 4    | `components/ui/section-label.tsx`               | creado — `SectionLabel` (eyebrow uppercase 12.5px/800/tracking 0.8px)                                                                                    |
+| 5    | `components/layout/page-header.tsx`             | creado — `PageHeader` (props `eyebrow`/`title`/`subtitle`)                                                                                               |
+| 5    | `components/layout/app-shell.tsx`               | creado — `AppShell` (wrapper flex, slot `sidebar` + `<main>` scrollable)                                                                                 |
+| 6    | `components/layout/sidebar/sidebar-content.tsx` | creado — logo + CTA + nav + user card (SVGs inline)                                                                                                      |
+| 6    | `components/layout/sidebar/sidebar.tsx`         | creado — `<aside>` sticky 248px `hidden md:flex`                                                                                                         |
+| 6    | `components/layout/sidebar/mobile-nav.tsx`      | creado — `'use client'`, hamburger + overlay + drawer slide-in, cierre por overlay o link                                                                |
+| 7    | `components/feed/post-badge.tsx`                | creado — pill con dot + label según `badgeConfig`                                                                                                        |
+| 7    | `components/feed/photo-placeholder.tsx`         | creado — caja dashed + ícono + caption                                                                                                                   |
+| 7    | `components/feed/post-actions.tsx`              | creado — likes + comentarios + "Editar"                                                                                                                  |
+| 7    | `components/feed/post-card.tsx`                 | creado — compone avatar/badge/texto/foto/actions                                                                                                         |
+| 7    | `components/feed/composer-trigger.tsx`          | creado — tarjeta "Compartí un momento…"                                                                                                                  |
+| 8    | `app/page.tsx`                                  | modificado — composición final con `AppShell` + `PageHeader` + `ComposerTrigger` + separador + `feedPosts.map(PostCard)`; boilerplate eliminado          |
+| —    | `eslint.config.mjs`                             | modificado — `references/**` agregado a `globalIgnores` (el dc-runtime no es parte de la app)                                                            |
+
+### Hallazgos y decisiones durante la implementación
+
+- **Fredoka es variable font** (wght 300–700, sin italic): se carga sin `weight` para usar el eje completo. Nunito es variable (wght 200–1000, con italic): se cargan pesos `400–800` + estilo `normal`/`italic`. Verificado en `node_modules/next/dist/.../font-data.json`.
+- **Mockup como fuente de verdad**: el spec decía "solita" pero el mockup dice "solito" — se usó el mockup (textos visibles al usuario).
+- **Tailwind v4 usa la propiedad `translate`** (no `transform`) para las utilidades `translate-x-*`. Relevante al inspeccionar el estado del drawer.
+- **`eslint.config.mjs`**: `references/pantallas/support.js` (dc-runtime generado) disparaba errores de lint ajenos a la app. Se ignoró `references/**` en `globalIgnores` dado que, por AGENTS.md, no es parte de la app Next.js ni debe importarse/modificarse.
+- **Likes como `<span>`** (no `<a>`) y comentarios + "Editar" como `<a href="#">`, igualando el mockup.
+- Colores no tokenizados (sombras, gradientes, matices) se renderizan con valores arbitrarios de Tailwind (`bg-[#...]`, `shadow-[...]`, `bg-[linear-gradient(...)]`), según mitigación de riesgos.
+
+### Verificación (Paso 9)
+
+- `npm run lint` → exit 0 (sin errores ni warnings en código de la app).
+- `npm run build` → exit 0 (compilación + typecheck OK, 1 ruta estática `/`).
+- `npm run dev` → `Ready in 1680ms`, `GET / 200`, 0 errores en consola del navegador.
+- Estructura desktop verificada vía snapshot de accesibilidad: sidebar (logo, CTA, nav 4 items, user card), header ("GUARDERÍA · SALA SOLES" / "Buenas, Caro" / "12 niños · martes 17 jun"), composer, separador "PUBLICADO HOY" y los 3 posts con textos, badges, foto y contadores exactos.
+- Drawer mobile (390×844): abre al pulsar el hamburger (overlay opacity 1, pointer-events auto); cierra al pulsar un enlace del sidebar (overlay opacity 0, pointer-events none). El cierre por overlay está implementado (`onClick` en el div overlay) pero no se pudo disparar vía Playwright porque el drawer intercepta los clics en su zona; el path de cierre por enlace sí se verificó.

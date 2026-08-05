@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // El runtime dc de previsualización de diseños no es parte de la app Next.js.
+    "references/**",
   ]),
 ]);
 

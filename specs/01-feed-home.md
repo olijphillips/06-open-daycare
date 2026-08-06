@@ -1,6 +1,6 @@
 # SPEC 01 — Feed de la guardería como home `/`
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** —
 > **Date:** 2026-08-05
 > **Implemented:** 2026-08-05

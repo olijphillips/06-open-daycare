@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
 import { PrimaryButton } from "@/components/ui/button";
 import { classroom, currentUser } from "@/lib/mock/feed";
@@ -57,15 +58,18 @@ function LogoutIcon() {
   );
 }
 
+export type NavLabel = "Feed" | "Niños" | "Avisos" | "Mi cuenta";
+
 const navItems = [
-  { label: "Feed", href: "#", active: true, icon: <HomeIcon /> },
-  { label: "Niños", href: "#", active: false, icon: <ChildrenIcon /> },
-  { label: "Avisos", href: "#", active: false, icon: <BellIcon /> },
-  { label: "Mi cuenta", href: "#", active: false, icon: <UserIcon /> },
+  { label: "Feed", href: "/", icon: <HomeIcon /> },
+  { label: "Niños", href: "/kids", icon: <ChildrenIcon /> },
+  { label: "Avisos", href: "#", icon: <BellIcon /> },
+  { label: "Mi cuenta", href: "#", icon: <UserIcon /> },
 ];
 
 // Contenido del sidebar (variante Maestra). Se reutiliza en desktop y drawer mobile.
-export function SidebarContent() {
+// activeItem marca el ítem de nav activo (default "Feed" para no romper la home).
+export function SidebarContent({ activeItem = "Feed" }: { activeItem?: NavLabel }) {
   return (
     <>
       {/* Logo */}
@@ -90,20 +94,24 @@ export function SidebarContent() {
 
       {/* Navegación */}
       <nav className="flex flex-1 flex-col gap-1">
-        {navItems.map((item) => (
-          <a
-            key={item.label}
-            href={item.href}
-            className={`flex items-center gap-3 rounded-[12px] px-3 py-[11px] text-[14.5px] ${
-              item.active
-                ? "bg-primary-soft font-extrabold text-accent"
-                : "font-semibold text-[#6E6359]"
-            }`}
-          >
-            {item.icon}
-            {item.label}
-          </a>
-        ))}
+        {navItems.map((item) => {
+          const className = `flex items-center gap-3 rounded-[12px] px-3 py-[11px] text-[14.5px] ${
+            item.label === activeItem
+              ? "bg-primary-soft font-extrabold text-accent"
+              : "font-semibold text-[#6E6359]"
+          }`;
+          return item.href.startsWith("/") ? (
+            <Link key={item.label} href={item.href} className={className}>
+              {item.icon}
+              {item.label}
+            </Link>
+          ) : (
+            <a key={item.label} href={item.href} className={className}>
+              {item.icon}
+              {item.label}
+            </a>
+          );
+        })}
       </nav>
 
       {/* Tarjeta de usuario + logout */}

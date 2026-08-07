@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { SidebarContent } from "./sidebar-content";
+import { SidebarContent, type NavLabel } from "./sidebar-content";
 
 // Navegación mobile: botón hamburguesa + overlay + drawer con slide-in.
 // Reutiliza exactamente el contenido del sidebar desktop.
-export function MobileNav() {
+export function MobileNav({ activeItem }: { activeItem?: NavLabel }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -41,7 +41,7 @@ export function MobileNav() {
             open ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <SidebarContent />
+          <SidebarContent activeItem={activeItem} />
         </aside>
       </div>
     </>

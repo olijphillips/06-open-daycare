@@ -73,7 +73,7 @@ export function SidebarContent({ activeItem = "Feed" }: { activeItem?: NavLabel 
   return (
     <>
       {/* Logo */}
-      <a href="#" className="flex items-center gap-[11px] px-2 pb-[22px] pt-1">
+      <Link href="/" className="flex items-center gap-[11px] px-2 pb-[22px] pt-1">
         <div className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-[12px] bg-[linear-gradient(155deg,#F8C3A8,#F2937A)]">
           <SunIcon />
         </div>
@@ -85,7 +85,7 @@ export function SidebarContent({ activeItem = "Feed" }: { activeItem?: NavLabel 
             Sala {classroom.name}
           </div>
         </div>
-      </a>
+      </Link>
 
       {/* CTA Nueva publicación */}
       <PrimaryButton href="#" icon={<PlusIcon />} className="mb-[18px]">

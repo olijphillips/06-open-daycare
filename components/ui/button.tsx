@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 interface PrimaryButtonProps {
@@ -18,12 +19,12 @@ export function PrimaryButton({
   fullWidth = true,
 }: PrimaryButtonProps) {
   return (
-    <a
+    <Link
       href={href}
       className={`${fullWidth ? "flex w-full" : "inline-flex"} items-center justify-center gap-2 rounded-[14px] bg-[linear-gradient(180deg,#F4977E,#EE8164)] px-3 py-3 text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,0.75)] ${className}`}
     >
       {icon}
       {children}
-    </a>
+    </Link>
   );
 }

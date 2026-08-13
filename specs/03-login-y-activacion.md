@@ -1,8 +1,9 @@
 # SPEC 03 — Login `/login` y Activación de cuenta `/activar-cuenta`
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01
 > **Date:** 2026-08-12
+> **Implemented:** 2026-08-12
 > **Objective:** Habilitar `/login` y `/activar-cuenta` replicando `login.dc.html` y `activar-cuenta.dc.html` con mock data en `lib/mock/auth.ts`, navegación cruzada entre ambas y hacia `/`, y sin el toggle "INGRESO COMO" (Personal/Familia) del mockup.
 
 ## Scope
@@ -63,17 +64,17 @@ export const invitation: Invitation = {
 
 ## Acceptance criteria
 
-- [ ] `npm run dev` muestra `/login` y `/activar-cuenta` sin errores en consola.
-- [ ] `/login` reproduce `login.dc.html` **sin** el bloque INGRESO COMO (ni botones Personal/Familia).
-- [ ] El panel izquierdo muestra logo OpenDayCare, titular "El día de cada niño, compartido con su familia.", subtexto y "🌿 Guardería Sala Soles".
-- [ ] El form muestra EMAIL (precargado `caro@opendaycare.com`), CONTRASEÑA, "¿Olvidaste tu contraseña?"→`#`, botón "Iniciar sesión"→`/` y enlace "Activá tu cuenta"→`/activar-cuenta`.
-- [ ] `/activar-cuenta` reproduce `activar-cuenta.dc.html`: logo, "Bienvenida a OpenDayCare", card "Mateo · Sala Soles" (datos desde `lib/mock/auth.ts`), código `7K4P9`, email `lucia.fernandez@gmail.com`, contraseña precargada y checkbox de autorización marcado.
-- [ ] El botón "Activar mi cuenta"→`/` y el enlace "Iniciar sesión"→`/login`.
-- [ ] Ambas pantallas usan fondo `#FBF4EC` y están fuera del `AppShell` (sin sidebar).
-- [ ] En viewport < `md` el login oculta el panel izquierdo y centra el formulario.
-- [ ] `npm run lint` pasa sin errores.
-- [ ] `npm run build` pasa (typecheck) con `/login` y `/activar-cuenta` prerenderizadas.
-- [ ] La comparación visual con los `.dc.html` de referencia en desktop no muestra diferencias significativas.
+- [x] `npm run dev` muestra `/login` y `/activar-cuenta` sin errores en consola.
+- [x] `/login` reproduce `login.dc.html` **sin** el bloque INGRESO COMO (ni botones Personal/Familia).
+- [x] El panel izquierdo muestra logo OpenDayCare, titular "El día de cada niño, compartido con su familia.", subtexto y "🌿 Guardería Sala Soles".
+- [x] El form muestra EMAIL (precargado `caro@opendaycare.com`), CONTRASEÑA, "¿Olvidaste tu contraseña?"→`#`, botón "Iniciar sesión"→`/` y enlace "Activá tu cuenta"→`/activar-cuenta`.
+- [x] `/activar-cuenta` reproduce `activar-cuenta.dc.html`: logo, "Bienvenida a OpenDayCare", card "Mateo · Sala Soles" (datos desde `lib/mock/auth.ts`), código `7K4P9`, email `lucia.fernandez@gmail.com`, contraseña precargada y checkbox de autorización marcado.
+- [x] El botón "Activar mi cuenta"→`/` y el enlace "Iniciar sesión"→`/login`.
+- [x] Ambas pantallas usan fondo `#FBF4EC` y están fuera del `AppShell` (sin sidebar).
+- [x] En viewport < `md` el login oculta el panel izquierdo y centra el formulario.
+- [x] `npm run lint` pasa sin errores.
+- [x] `npm run build` pasa (typecheck) con `/login` y `/activar-cuenta` prerenderizadas.
+- [x] La comparación visual con los `.dc.html` de referencia en desktop no muestra diferencias significativas.
 
 ## Decisions
 

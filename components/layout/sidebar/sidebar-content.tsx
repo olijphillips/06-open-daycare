@@ -158,7 +158,11 @@ export function SidebarContent({
       </Link>
 
       {/* CTA Nueva publicación */}
-      <PrimaryButton href="#" icon={<PlusIcon />} className="mb-[18px]">
+      <PrimaryButton
+        href="/crear-publicacion"
+        icon={<PlusIcon />}
+        className="mb-[18px]"
+      >
         Nueva publicación
       </PrimaryButton>
 

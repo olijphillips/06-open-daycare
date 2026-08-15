@@ -1,0 +1,9 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "references": {
+    "docs": {
+      "path": "../07-DB-Schema",
+      "description": "Usar para el esquema de base de datos y convenciones de datos"
+    }
+  }
+}

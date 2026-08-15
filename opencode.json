@@ -1,9 +1,17 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "lsp": true,
   "references": {
     "docs": {
       "path": "../07-DB-Schema",
       "description": "Usar para el esquema de base de datos y convenciones de datos"
+    }
+  },
+  "mcp": {
+    "supabase": {
+      "type": "remote",
+      "url": "https://mcp.supabase.com/mcp?project_ref=jmjcqadnhjdiuliaiqpy&features=docs%2Caccount%2Cdatabase%2Cdebugging%2Cdevelopment%2Cfunctions%2Cbranching",
+      "enabled": true
     }
   }
 }

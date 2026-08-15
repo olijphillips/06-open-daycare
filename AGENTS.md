@@ -35,6 +35,14 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - Context. Usaremos este MCP para traer la documentación actualizada del framework.
 
+## Supabase
+
+Instaladas las skills `supabase` y `supabase-postgres-best-practices` en `.agents/skills/`. Úsalas para cualquier tarea con Supabase.
+
+- `supabase`: flujo general para cualquier tarea con Supabase (Database, Auth, Edge Functions, Realtime, Storage, Vectors, RLS, clientes `supabase-js` y `@supabase/ssr`, CLI, migraciones, logs y depuración de errores).
+- `supabase-postgres-best-practices`: buenas prácticas de Postgres mantenidas por Supabase. Cargarla ANTES de escribir o cambiar cualquier cosa en Postgres (tablas, columnas, migraciones, RLS, índices, triggers, funciones, pg_cron, pgvector) y al diagnosticar consultas lentas, bloqueos o RLS.
+- El proyecto remoto de Supabase está configurado en `opencode.json` (MCP `supabase`).
+
 ## Spec Driven Development
 
 - /spec Usaremos esta habilidad para crear las especificaciones.

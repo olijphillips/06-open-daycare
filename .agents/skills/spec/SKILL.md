@@ -11,10 +11,10 @@ allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Bash(ls:*), Bash(cat:*)
 ## Session context
 
 Today's date (use this for the spec header, never guess it):
-!`date +%F`
+!`date +%F || node -e "const d=new Date();console.log(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'))"`
 
-Specs that already exist:
-!`ls specs/ 2>/dev/null || echo "The specs/ folder does not exist yet"`
+Specs that already exist (advisory — re-verify with Glob `specs/*.md` before numbering):
+!`ls specs/ || echo "The specs/ folder does not exist yet"`
 
 ---
 
@@ -36,7 +36,7 @@ Read `template.md` (in the same directory as this skill) to see the full structu
 Before asking questions about the feature, make sure you have project context:
 
 1. Read the project-memory file, if one exists. Try in order and stop at the first hit: `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `README.md`. This adapts the skill to whichever agent is running it (Claude Code, Codex, Gemini CLI, etc.).
-2. Look at the `specs/` listing in the session context above to see which specs already exist and how they are numbered.
+2. Look at the `specs/` listing in the session context above, but **always re-verify it at execution time** with your file tools: Glob `specs/*.md`. The session-context listing is advisory — if it says the folder does not exist but Glob finds `.md` files, trust Glob.
 3. If previous specs exist, read at least the two most recent ones to pick up the project's conventions — including the **language** they are written in and the exact wording they use for states and section headings. A new spec must match the existing ones.
 
 If the `$ARGUMENTS` argument comes in empty, ask the user for an initial **single-sentence** description of what they want to build. If the description does not fit in one sentence, that is the first signal that the feature is too big — suggest splitting it before continuing.
@@ -110,7 +110,7 @@ In both cases the content follows the same order:
 
 When the content is ready (either because you had everything, or because all sections were confirmed):
 
-1. Determine the next sequential number from the `specs/` listing in the session context. Take the highest existing number and add one, zero-padded to two digits. If the last one is `02-powerups.md`, this one will be `03-`. If `specs/` is empty or missing, start at `01-`.
+1. Determine the next sequential number. **Re-list `specs/` with Glob (`specs/*.md`) right before numbering** — never trust the session-context listing if it is stale or empty. Take the highest existing number and add one, zero-padded to two digits. If the last one is `02-powerups.md`, this one will be `03-`. If `specs/` is empty or missing, start at `01-`.
 2. Generate a short kebab-case slug from the objective (e.g. `levels-and-highscores`). See **Arguments** below for when `$ARGUMENTS` is the slug instead.
 3. Use the date from the session context above for the `**Date:**` field. **Never write a date you did not read from there.**
 4. Write the file directly at `specs/NN-slug.md` with all the sections. **Do not ask for permission to write it and do not ask whether the file name works** — announce the path in the final confirmation. Only ask if the target file already exists.

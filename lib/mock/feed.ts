@@ -2,7 +2,15 @@
 // Fuente: references/pantallas/feed.dc.html (mockup de la home).
 // Tipos e identificadores en inglés; slugs de id y contenido visible en español.
 
-export type PostType = "achievement" | "activity" | "announcement";
+// Tipos de publicación del feed (SPEC 01) + tipos del compositor (SPEC 05).
+export type PostType =
+  | "meal" // Comida
+  | "nap" // Siesta
+  | "activity" // Actividad
+  | "achievement" // Logro
+  | "mood" // Ánimo
+  | "photo" // Foto
+  | "announcement"; // Anuncio
 
 export interface FeedPost {
   id: string;
@@ -24,11 +32,17 @@ export const badgeConfig: Record<
   PostType,
   { bg: string; dot: string; text: string; label: string }
 > = {
-  achievement: {
-    bg: "#CFEBD8",
-    dot: "#3E9B6C",
-    text: "#3E9B6C",
-    label: "LOGRO",
+  meal: {
+    bg: "#9A7B1E",
+    dot: "#F4DC8E",
+    text: "#FFFFFF",
+    label: "COMIDA",
+  },
+  nap: {
+    bg: "#E7DCF6",
+    dot: "#7B5FC0",
+    text: "#7B5FC0",
+    label: "SIESTA",
   },
   activity: {
     bg: "#C7E7F1",
@@ -36,12 +50,44 @@ export const badgeConfig: Record<
     text: "#2E89A6",
     label: "ACTIVIDAD",
   },
+  achievement: {
+    bg: "#CFEBD8",
+    dot: "#3E9B6C",
+    text: "#3E9B6C",
+    label: "LOGRO",
+  },
+  mood: {
+    bg: "#F9D2DE",
+    dot: "#C56486",
+    text: "#C56486",
+    label: "ÁNIMO",
+  },
+  photo: {
+    bg: "#FBD8CC",
+    dot: "#D9684A",
+    text: "#D9684A",
+    label: "FOTO",
+  },
   announcement: {
     bg: "#CCD8F4",
     dot: "#4E72C8",
     text: "#4E72C8",
     label: "ANUNCIO",
   },
+};
+
+// Píldoras del compositor (SPEC 05): label visible + colores de crear-publicacion.dc.html.
+export const composerTypeConfig: Record<
+  PostType,
+  { label: string; bg: string; text: string }
+> = {
+  meal: { label: "Comida", bg: "#9A7B1E", text: "#FFFFFF" },
+  nap: { label: "Siesta", bg: "#E7DCF6", text: "#7B5FC0" },
+  activity: { label: "Actividad", bg: "#2E89A6", text: "#FFFFFF" },
+  achievement: { label: "Logro", bg: "#CFEBD8", text: "#3E9B6C" },
+  mood: { label: "Ánimo", bg: "#F9D2DE", text: "#C56486" },
+  photo: { label: "Foto", bg: "#FBD8CC", text: "#D9684A" },
+  announcement: { label: "Anuncio", bg: "#CCD8F4", text: "#4E72C8" },
 };
 
 export const currentUser = {
@@ -97,3 +143,29 @@ export const feedPosts: FeedPost[] = [
     comments: 0,
   },
 ];
+
+// Store en memoria del feed (SPEC 05): el compositor agrega posts aquí.
+// Sin persistencia: al recargar la página se vuelve al arreglo inicial.
+let posts: FeedPost[] = feedPosts;
+const listeners = new Set<() => void>();
+
+export function getPosts(): FeedPost[] {
+  return posts;
+}
+
+// Snapshot estable para el server-render de useSyncExternalStore (SPEC 05).
+export function getInitialPosts(): FeedPost[] {
+  return feedPosts;
+}
+
+export function subscribe(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+export function addPost(post: FeedPost): void {
+  posts = [post, ...posts];
+  listeners.forEach((listener) => listener());
+}

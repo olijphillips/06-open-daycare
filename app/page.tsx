@@ -1,3 +1,6 @@
+"use client";
+
+import { useSyncExternalStore } from "react";
 import { ComposerTrigger } from "@/components/feed/composer-trigger";
 import { PostCard } from "@/components/feed/post-card";
 import { AppShell } from "@/components/layout/app-shell";
@@ -5,9 +8,11 @@ import { PageHeader } from "@/components/layout/page-header";
 import { MobileNav } from "@/components/layout/sidebar/mobile-nav";
 import { Sidebar } from "@/components/layout/sidebar/sidebar";
 import { SectionLabel } from "@/components/ui/section-label";
-import { classroom, currentUser, feedPosts } from "@/lib/mock/feed";
+import { classroom, currentUser, getInitialPosts, getPosts, subscribe } from "@/lib/mock/feed";
 
 export default function Home() {
+  // Feed en memoria (SPEC 05): se re-renderiza al publicar desde /crear-publicacion.
+  const feedPosts = useSyncExternalStore(subscribe, getPosts, getInitialPosts);
   return (
     <AppShell sidebar={<><Sidebar /><MobileNav /></>}>
       <div className="mx-auto max-w-[760px] px-5 pb-20 pt-16 md:px-10 md:pt-[34px]">

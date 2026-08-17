@@ -1,6 +1,6 @@
 # SPEC 06 — Tabla `daycares` en Supabase
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** ninguno
 > **Date:** 2026-08-17
 > **Objective:** Crear la tabla raíz `daycares` en el proyecto Supabase aplicando el patrón de migraciones vía MCP `apply_migration`, con RLS activado y una guardería demo sembrada.
@@ -52,13 +52,13 @@ Convenciones (según `07-DB-Schema`): PK `id` uuid con `gen_random_uuid()`; `cre
 
 ## Acceptance criteria
 
-- [ ] `list_migrations` incluye la migración `create_daycares_table`.
-- [ ] `public.daycares` existe con columnas `id` (uuid PK), `name` (text not null) y `created_at` (timestamptz not null default now()).
-- [ ] RLS está habilitado en `daycares`.
-- [ ] Existe la política `daycares_select_authenticated` (SELECT, rol `authenticated`, `using (true)`).
-- [ ] Existe exactamente una fila con `name = 'Guardería Sala Soles'`.
-- [ ] `get_advisors` (security) no reporta problemas en `daycares`.
-- [ ] No cambia ningún archivo de la app (spec solo de base de datos).
+- [x] `list_migrations` incluye la migración `create_daycares_table` (versión `20260817224831`).
+- [x] `public.daycares` existe con columnas `id` (uuid PK), `name` (text not null) y `created_at` (timestamptz not null default now()).
+- [x] RLS está habilitado en `daycares`.
+- [x] Existe la política `daycares_select_authenticated` (SELECT, rol `authenticated`, `using (true)`).
+- [x] Existe exactamente una fila con `name = 'Guardería Sala Soles'`.
+- [x] `get_advisors` (security) no reporta problemas en `daycares` (solo 2 WARN preexistentes sobre la función `public.rls_auto_enable()`, ajena a esta tabla).
+- [x] No cambia ningún archivo de la app (spec solo de base de datos; `git status` solo muestra `supabase/` sin trackear, no código de la app).
 
 ## Decisions
 

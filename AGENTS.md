@@ -43,6 +43,17 @@ Instaladas las skills `supabase` y `supabase-postgres-best-practices` en `.agent
 - `supabase-postgres-best-practices`: buenas prácticas de Postgres mantenidas por Supabase. Cargarla ANTES de escribir o cambiar cualquier cosa en Postgres (tablas, columnas, migraciones, RLS, índices, triggers, funciones, pg_cron, pgvector) y al diagnosticar consultas lentas, bloqueos o RLS.
 - El proyecto remoto de Supabase está configurado en `opencode.json` (MCP `supabase`).
 
+### Migraciones locales (obligatorio)
+
+Todos los cambios de base de datos se gestionan de forma local con la CLI de Supabase y versiones migraciones en el repositorio. Reglas:
+
+- TODO cambio de BD (tablas, columnas, RLS, índices, triggers, funciones, extensiones, etc.) DEBE crearse como migración local en `supabase/migrations/` ANTES de aplicarse a cualquier entorno remoto. Nunca aplicar SQL suelto o DDL directamente al proyecto remoto.
+- Generar nuevas migraciones con la CLI de Supabase: `supabase migration new <nombre>` (o `npx supabase migration new <nombre>`).
+- Al crear o modificar esquema, editar el archivo de migración correspondiente y aplicarlo localmente con `supabase migration up` (preferiblemente levantando el stack local con `supabase start`).
+- Al introducir migraciones locales nuevas, sincronizar con el proyecto remoto con `supabase db push` (o `supabase migration up --remote`).
+- No editar migraciones ya aplicadas a un entorno remoto; crear una migración nueva para cualquier cambio posterior.
+- El flujo típico es: escribir migración local → probar en el stack local (`supabase start`) → empujar a remoto (`supabase db push`).
+
 ## Spec Driven Development
 
 - /spec Usaremos esta habilidad para crear las especificaciones.

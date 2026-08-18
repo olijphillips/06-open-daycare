@@ -1,33 +1,17 @@
-"use client";
-
-import { useState } from "react";
+import { cookies } from "next/headers";
 import { KidCard } from "@/components/kids/kid-card";
 import { AddChildModal } from "@/components/kids/add-child-modal";
 import { AppShell } from "@/components/layout/app-shell";
 import { MobileNav } from "@/components/layout/sidebar/mobile-nav";
 import { Sidebar } from "@/components/layout/sidebar/sidebar";
-import { PrimaryButton } from "@/components/ui/button";
 import { SectionLabel } from "@/components/ui/section-label";
-import type { Child } from "@/lib/mock/children";
-import { classrooms, children as mockChildren } from "@/lib/mock/children";
+import { buildChildView } from "@/lib/data/children";
+import type { ChildRow, ChildView, RoomView } from "@/lib/data/children";
+import { createClient } from "@/utils/supabase/server";
 
-// Icono "+" del CTA "Agregar niño".
-function PlusIcon() {
-  return (
-    <svg
-      width="17"
-      height="17"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="#fff"
-      strokeWidth="2.4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 5v14M5 12h14" />
-    </svg>
-  );
-}
+// Orden de presentación de las salas (consistente con la UI del SPEC 04).
+// Las salas vienen de la BD; este orden fijo mantiene "Sol, Tierra, Luna".
+const roomDisplayOrder = ["Sol", "Tierra", "Luna"];
 
 // Icono de búsqueda del buscador.
 function SearchIcon() {
@@ -48,15 +32,27 @@ function SearchIcon() {
   );
 }
 
-export default function KidsPage() {
-  // Los niños viven en estado local: el modal los agrega en memoria (SPEC 04).
-  const [kids, setKids] = useState(mockChildren);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export default async function KidsPage() {
+  const supabase = createClient(await cookies());
 
-  function handleSave(child: Child) {
-    setKids((current) => [...current, child]);
-    setIsModalOpen(false);
-  }
+  const [{ data: rooms }, { data: rows }] = await Promise.all([
+    supabase.from("rooms").select("id, name"),
+    supabase.from("children").select("*").order("full_name"),
+  ]);
+
+  // Salas ordenadas según el orden de presentación (Sol, Tierra, Luna).
+  const roomViews: RoomView[] = (rooms ?? [])
+    .map((room) => ({ id: room.id, name: room.name }))
+    .sort((a, b) => {
+      const ia = roomDisplayOrder.indexOf(a.name);
+      const ib = roomDisplayOrder.indexOf(b.name);
+      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || a.name.localeCompare(b.name);
+    });
+
+  const roomNameById = new Map(roomViews.map((room) => [room.id, room.name]));
+  const kids: ChildView[] = (rows ?? []).map((row) =>
+    buildChildView(row as ChildRow, roomNameById.get(row.room_id) ?? ""),
+  );
 
   return (
     <AppShell
@@ -76,13 +72,7 @@ export default function KidsPage() {
               Niños
             </h1>
           </div>
-          <PrimaryButton
-            onClick={() => setIsModalOpen(true)}
-            icon={<PlusIcon />}
-            fullWidth={false}
-          >
-            Agregar niño
-          </PrimaryButton>
+          <AddChildModal rooms={roomViews} />
         </div>
 
         {/* Buscador (solo visual) */}
@@ -96,14 +86,14 @@ export default function KidsPage() {
           />
         </div>
 
-        {/* Secciones de sala: siempre las 3 (Sol, Tierra, Luna) */}
-        {classrooms.map((room) => {
-          const roomChildren = kids.filter((child) => child.classroom === room);
+        {/* Secciones de sala: las que existan en la BD */}
+        {roomViews.map((room) => {
+          const roomChildren = kids.filter((child) => child.classroom === room.name);
           return (
-            <div key={room} className="mb-[22px]">
+            <div key={room.id} className="mb-[22px]">
               <div className="mb-[14px] flex items-center gap-3">
                 <SectionLabel className="text-ink">
-                  SALA {room.toUpperCase()}
+                  SALA {room.name.toUpperCase()}
                 </SectionLabel>
                 <span className="text-[13px] text-[#A89A8B]">
                   {roomChildren.length} niños
@@ -114,7 +104,7 @@ export default function KidsPage() {
               {roomChildren.length > 0 ? (
                 <div className="grid grid-cols-1 gap-[14px] sm:grid-cols-2">
                   {roomChildren.map((child) => (
-                    <KidCard key={child.slug} child={child} />
+                    <KidCard key={child.id} child={child} />
                   ))}
                 </div>
               ) : (
@@ -126,13 +116,6 @@ export default function KidsPage() {
           );
         })}
       </div>
-
-      {isModalOpen && (
-        <AddChildModal
-          onClose={() => setIsModalOpen(false)}
-          onSave={handleSave}
-        />
-      )}
     </AppShell>
   );
 }

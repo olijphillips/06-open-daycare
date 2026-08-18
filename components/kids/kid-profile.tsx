@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
-import { LinkedParentsCard } from "@/components/kids/linked-parents-card";
-import type { Child } from "@/lib/mock/children";
+import type { ChildView } from "@/lib/data/children";
 
 function ChevronLeftIcon() {
   return (
@@ -56,8 +55,8 @@ function SunIcon() {
   );
 }
 
-// Perfil completo de un niño. Lo usa /kids/[slug].
-export function KidProfile({ child }: { child: Child }) {
+// Perfil completo de un niño. Lo usa /kids/[id].
+export function KidProfile({ child }: { child: ChildView }) {
   return (
     <div className="mx-auto max-w-[820px] px-5 pb-20 pt-16 md:px-10 md:pt-[34px]">
       {/* Volver a Niños */}
@@ -146,9 +145,6 @@ export function KidProfile({ child }: { child: Child }) {
             <SunIcon />
             Resumen del día
           </a>
-
-          {/* Padres vinculados */}
-          <LinkedParentsCard parents={child.parents} childName={child.name} />
         </div>
       </div>
     </div>

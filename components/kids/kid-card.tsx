@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import type { Child } from "@/lib/mock/children";
+import type { ChildView } from "@/lib/data/children";
 
 // Etiqueta de padres vinculados para la meta de la tarjeta.
 function parentsLabel(count: number): string {
@@ -29,10 +29,10 @@ function ChevronIcon() {
   );
 }
 
-// Tarjeta de niño del listado /kids. Toda la tarjeta es un enlace al perfil.
-export function KidCard({ child }: { child: Child }) {
+// Tarjeta de niño del listado /kids. Toda la tarjeta es un enlace al perfil por id.
+export function KidCard({ child }: { child: ChildView }) {
   return (
-    <Link href={`/kids/${child.slug}`} className="block">
+    <Link href={`/kids/${child.id}`} className="block">
       <Card className="flex min-w-0 items-center gap-[14px] p-4 transition duration-150 hover:-translate-y-0.5 hover:border-[#F2A78E]">
         <Avatar
           size={48}

@@ -1,9 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
-import { currentUser } from "@/lib/mock/feed";
+import { useSessionUser } from "@/lib/mock/use-session";
 
 // Disparador del compositor: tarjeta "Compartí un momento…" con avatar + ícono cámara.
 export function ComposerTrigger() {
+  const user = useSessionUser();
+
   return (
     <Link
       href="/crear-publicacion"
@@ -11,9 +15,9 @@ export function ComposerTrigger() {
     >
       <Avatar
         size={40}
-        bg={currentUser.avatarBg}
+        bg={user.avatarBg}
         color="#fff"
-        initial={currentUser.initial}
+        initial={user.initial}
         fontSize={16}
       />
       <span className="flex-1 text-[15px] text-[#A89A8B]">Compartí un momento…</span>

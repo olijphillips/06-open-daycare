@@ -9,12 +9,14 @@ import { MobileNav } from "@/components/layout/sidebar/mobile-nav";
 import { Sidebar } from "@/components/layout/sidebar/sidebar";
 import { SectionLabel } from "@/components/ui/section-label";
 import { classroom, getInitialPosts, getPosts, subscribe } from "@/lib/mock/feed";
-import { useSessionUser } from "@/lib/mock/use-session";
+import { useSessionUser } from "@/lib/auth/use-session";
 
 export default function Home() {
   // Feed en memoria (SPEC 05): se re-renderiza al publicar desde /crear-publicacion.
   const feedPosts = useSyncExternalStore(subscribe, getPosts, getInitialPosts);
   const user = useSessionUser();
+  // Página protegida: el proxy garantiza sesión; este guard evita el crash si no la hay.
+  if (!user) return null;
   return (
     <AppShell sidebar={<><Sidebar /><MobileNav /></>}>
       <div className="mx-auto max-w-[760px] px-5 pb-20 pt-16 md:px-10 md:pt-[34px]">

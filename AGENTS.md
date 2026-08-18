@@ -29,6 +29,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - The `.dc.html` files are rendered by a standalone "dc-runtime" (`references/pantallas/support.js`, a generated bundle). This runtime is for previewing designs only — it is NOT part of the Next.js app and should not be imported or modified.
 - Design system inferred from references: Fredoka + Nunito fonts, warm cream/brown palette (`#f6ecdf` background, `#3f362e` text). Match these when building real components.
 
+## Esquema de base de datos
+
+- La fuente de verdad para el esquema de BD es la referencia `db-schema` (`references` en `opencode.json`), que apunta a `../07-DB-Schema/opendaycare-database-schema.md`. Consúltala antes de tocar tablas, columnas, enums o relaciones, y para seguir las convenciones de datos.
+- Convenciones clave: PK `id` tipo `uuid` (default `gen_random_uuid()`), `created_at` / `updated_at` `timestamptz`. Todo lo persistido en la BD va en inglés (enums, tags, códigos); las etiquetas visibles se traducen en la UI (español).
+
 ## MCPs
 
 - Playwright Screenshots y cualquier cosa relacionada a Playwright tienen que estar en la carpeta .playwright-mcp.
@@ -58,6 +63,7 @@ Todos los cambios de base de datos se gestionan de forma local con la CLI de Sup
 
 - /spec Usaremos esta habilidad para crear las especificaciones.
 - /spec-impl Usaremos esta habilidad para crear la implementación de las especificaciones.
+- Todo spec relacionado con tablas, base de datos o Supabase DEBE crearse dentro de `specs/database/`. Los specs de UI/features van en la raíz de `specs/`.
 
 ## Reglas de código
 

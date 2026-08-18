@@ -1,11 +1,24 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PrimaryButton } from "@/components/ui/button";
-import { authDefaults } from "@/lib/mock/auth";
+import { authDefaults, signIn } from "@/lib/mock/auth";
 import { BrandPanel } from "./brand-panel";
 
 // Pantalla de login: panel de marca (desktop) + formulario.
 // No incluye el selector INGRESO COMO (Personal/Familia) del mockup.
+// Al enviar guarda la sesión mock (signIn) y navega al feed.
 export function Login() {
+  const router = useRouter();
+  const [email, setEmail] = useState(authDefaults.loginEmail);
+
+  function handleSubmit() {
+    signIn(email);
+    router.push("/");
+  }
+
   return (
     <div className="min-h-screen bg-[#FBF4EC] md:grid md:grid-cols-[1.05fr_1fr]">
       <BrandPanel />
@@ -22,7 +35,8 @@ export function Login() {
           </div>
           <input
             type="email"
-            defaultValue={authDefaults.loginEmail}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="mb-[18px] w-full rounded-[14px] border-[1.5px] border-[#EADFD0] bg-white px-4 py-[14px] text-[15px] text-ink"
           />
 
@@ -41,7 +55,10 @@ export function Login() {
             </span>
           </div>
 
-          <PrimaryButton href="/" className="rounded-[15px] py-[15px] text-base">
+          <PrimaryButton
+            className="rounded-[15px] py-[15px] text-base"
+            onClick={handleSubmit}
+          >
             Iniciar sesión
           </PrimaryButton>
 

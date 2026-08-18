@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Avatar } from "@/components/ui/avatar";
 import { PrimaryButton } from "@/components/ui/button";
-import { classroom, currentUser } from "@/lib/mock/feed";
+import { classroom } from "@/lib/mock/feed";
+import { useSessionUser } from "@/lib/mock/use-session";
+import { signOut } from "@/lib/mock/auth";
 
 // Íconos inline del mockup del sidebar.
 function SunIcon() {
@@ -137,6 +142,15 @@ export function SidebarContent({
 }: {
   activeItem?: NavLabel;
 }) {
+  const user = useSessionUser();
+  const router = useRouter();
+
+  // Cierra la sesión mock y regresa a la pantalla de login.
+  function handleSignOut() {
+    signOut();
+    router.push("/login");
+  }
+
   return (
     <>
       {/* Logo */}
@@ -193,24 +207,26 @@ export function SidebarContent({
         <div className="flex items-center gap-[11px] px-2 py-[6px]">
           <Avatar
             size={38}
-            bg={currentUser.avatarBg}
+            bg={user.avatarBg}
             color="#fff"
-            initial={currentUser.initial}
+            initial={user.initial}
             fontSize={16}
           />
           <div className="min-w-0 flex-1">
             <div className="text-[14px] font-extrabold text-ink">
-              {currentUser.name}
+              {user.name}
             </div>
-            <div className="text-[12px] text-[#A89A8B]">{currentUser.role}</div>
+            <div className="text-[12px] text-[#A89A8B]">{user.role}</div>
           </div>
-          <a
-            href="#"
+          <button
+            type="button"
             title="Cerrar sesión"
+            aria-label="Cerrar sesión"
+            onClick={handleSignOut}
             className="flex h-8 w-8 flex-none items-center justify-center rounded-[10px] bg-cream text-muted"
           >
             <LogoutIcon />
-          </a>
+          </button>
         </div>
       </div>
     </>

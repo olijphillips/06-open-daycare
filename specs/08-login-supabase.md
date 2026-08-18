@@ -131,6 +131,7 @@ Se elimina de `authDefaults` el `loginEmail` (el login ya no precarga email).
 Durante la verificación, el login con los usuarios sembrados por SPEC 07 devolvía `500 Database error querying schema` en GoTrue v2.195. Causa raíz (documentada en [supabase/auth#1940](https://github.com/supabase/auth/issues/1940)): GoTrue hace `Scan` de `auth.users` y **falla si estas 4 columnas son NULL**: `confirmation_token`, `email_change`, `email_change_token_new` y `recovery_token` (deben ser `''`). Además, GoTrue exige `instance_id = 00000000-0000-0000-0000-000000000000` y la fila en `auth.identities` (convención actual: `provider_id` = el email o el id del usuario).
 
 Corrección aplicada a la BD remota (no en las migraciones ya aplicadas):
+
 - `admin@opendaycare.com` se recreó vía el signup de GoTrue (Auth API) y se confirmó su email.
 - `staff@opendaycare.com` se creó por SQL con las 4 columnas a `''`, `instance_id` de GoTrue, identidad `email` y metadata `role`/`full_name`/`daycare_id`.
 
@@ -198,8 +199,8 @@ Para entornos nuevos (`supabase db reset`), el seed de SPEC 07 reproduciría el 
 | `buildProfile` falla si el join a `daycares` no devuelve nombre.                           | `daycareName` nullable con fallback a `classroom.name` del mock.                                                       |
 | `useSessionUser()` pasa a devolver `null` y los 3 consumidores podrían romperse.           | Paso 9 actualiza los consumidores con guard de `null`; en páginas protegidas nunca debería darse (el proxy lo impide). |
 | El layout raíz dinámico cambia el output del build (adios prerenderizado estático global). | Decisión documentada; el único caso estático relevante era `/kids/[slug]`, que pasa a dinámica igual.                  |
-| Los seeds de SPEC 07 no producen usuarios logueables (500 de GoTrue).                        | Recreados con los valores que GoTrue exige; documentado en "Nota sobre el seed de SPEC 07" (issue #1940).             |
-| Rate limit de email de Supabase bloquea el signup/reset en ventanas de 1 hora.               | Crear usuarios por SQL corregido o por el dashboard (admin API, no envía email); el error del reset se muestra inline. |
+| Los seeds de SPEC 07 no producen usuarios logueables (500 de GoTrue).                      | Recreados con los valores que GoTrue exige; documentado en "Nota sobre el seed de SPEC 07" (issue #1940).              |
+| Rate limit de email de Supabase bloquea el signup/reset en ventanas de 1 hora.             | Crear usuarios por SQL corregido o por el dashboard (admin API, no envía email); el error del reset se muestra inline. |
 
 ## What is **not** in this spec
 

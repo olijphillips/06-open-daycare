@@ -59,6 +59,16 @@ Todos los cambios de base de datos se gestionan de forma local con la CLI de Sup
 - No editar migraciones ya aplicadas a un entorno remoto; crear una migración nueva para cualquier cambio posterior.
 - El flujo típico es: escribir migración local → probar en el stack local (`supabase start`) → empujar a remoto (`supabase db push`).
 
+### Cliente de la app (Supabase)
+
+- Clientes de Supabase en `utils/supabase/`: `server.ts` (Server Components / Server Actions / Route Handlers), `client.ts` (navegador) y `middleware.ts` (helper de cookies para el proxy).
+- En Next.js 16 el middleware global se llama `proxy.ts` en la raíz del proyecto, NO `middleware.ts`. `proxy.ts` usa `createClient` de `@/utils/supabase/middleware`; cuando se conecte el login real llamará a `supabase.auth.getClaims()` para refrescar la sesión en cada request.
+- Variables de entorno (en `.env.local`, gitignored; documentadas en `.env.template`):
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+  - `SUPABASE_DB_PASSWORD` (solo CLI/migraciones, NO exponer en el cliente)
+- La web aún NO consume la BD: la UI se alimenta de datos mock en `lib/mock/` (`auth.ts`, `feed.ts`, `children.ts`, `use-session.ts`). Al conectar Supabase, reemplazar los mocks por una capa de datos reales sin tocar los componentes.
+
 ## Spec Driven Development
 
 - /spec Usaremos esta habilidad para crear las especificaciones.

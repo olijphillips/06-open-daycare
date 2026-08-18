@@ -1,12 +1,30 @@
-import { type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/middleware";
 
 // Proxy de Next.js 16 (antes "middleware").
-// Refresca la sesión de Supabase en cada request y pasa el token renovado
-// a los Server Components y al navegador.
+// Refresca la sesión de Supabase en cada request, valida el usuario y
+// protege las rutas del feed: sin sesión válida redirige a /login.
 export async function proxy(request: NextRequest) {
-  // Importante: devolver la respuesta de createClient sin modificarla
-  return await createClient(request);
+  const { supabase, response } = createClient(request);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { pathname } = request.nextUrl;
+  const isProtected =
+    pathname === "/" ||
+    pathname === "/kids" ||
+    pathname.startsWith("/kids/") ||
+    pathname === "/crear-publicacion";
+
+  if (!user && isProtected) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
+
+  return response;
 }
 
 export const config = {

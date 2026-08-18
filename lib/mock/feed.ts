@@ -90,13 +90,6 @@ export const composerTypeConfig: Record<
   announcement: { label: "Anuncio", bg: "#CCD8F4", text: "#4E72C8" },
 };
 
-export const currentUser = {
-  name: "Caro Giménez",
-  role: "Maestra · Soles",
-  initial: "C",
-  avatarBg: "#F2937A",
-};
-
 export const classroom = { name: "Soles", childrenCount: 12 };
 
 export const feedPosts: FeedPost[] = [

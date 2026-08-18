@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
 import { PrimaryButton } from "@/components/ui/button";
-import { authDefaults, invitation } from "@/lib/mock/auth";
+import { authDefaults, invitation } from "@/lib/mock/invitation";
 
 // Pantalla de activación de cuenta tras la invitación de la guardería.
 export function ActivateAccount() {

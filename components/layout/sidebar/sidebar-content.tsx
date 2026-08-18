@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Avatar } from "@/components/ui/avatar";
 import { PrimaryButton } from "@/components/ui/button";
 import { classroom } from "@/lib/mock/feed";
-import { useSessionUser } from "@/lib/mock/use-session";
-import { signOut } from "@/lib/mock/auth";
+import { useSessionUser } from "@/lib/auth/use-session";
+import { createClient } from "@/utils/supabase/client";
 
 // Íconos inline del mockup del sidebar.
 function SunIcon() {
@@ -143,12 +142,12 @@ export function SidebarContent({
   activeItem?: NavLabel;
 }) {
   const user = useSessionUser();
-  const router = useRouter();
+  const supabase = createClient();
+  if (!user) return null;
 
-  // Cierra la sesión mock y regresa a la pantalla de login.
+  // Cierra la sesión real; el SessionProvider redirige a /login en SIGNED_OUT.
   function handleSignOut() {
-    signOut();
-    router.push("/login");
+    supabase.auth.signOut();
   }
 
   return (

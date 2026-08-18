@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
-import { useSessionUser } from "@/lib/mock/use-session";
+import { useSessionUser } from "@/lib/auth/use-session";
 
 // Disparador del compositor: tarjeta "Compartí un momento…" con avatar + ícono cámara.
 export function ComposerTrigger() {
   const user = useSessionUser();
+  // Página protegida: el proxy garantiza sesión; este guard evita el crash si no la hay.
+  if (!user) return null;
 
   return (
     <Link

@@ -33,5 +33,6 @@ export const createClient = (request: NextRequest) => {
     },
   );
 
-  return supabaseResponse
+  // Devuelve también el cliente para validar la sesión en el proxy.
+  return { supabase, response: supabaseResponse };
 };

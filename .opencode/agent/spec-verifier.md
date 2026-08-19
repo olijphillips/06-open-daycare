@@ -2,7 +2,7 @@
 name: spec-verifier
 description: Verifica, corrige y marca los checks de la seccion "Acceptance criteria" de un spec. Usa Context7 para validar Next.js y Playwright MCP para verificar pantallas y comportamiento visual. Invocar con @spec-verifier <ruta-del-spec>.
 mode: subagent
-model: opencode/gpt-5.6-luna
+model: deepseek/deepseek-v4-flash
 permission:
   edit: allow
   bash:

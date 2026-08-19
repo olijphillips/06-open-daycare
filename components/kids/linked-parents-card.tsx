@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Avatar } from "@/components/ui/avatar";
 import { SectionLabel } from "@/components/ui/section-label";
 import { LinkParentModal } from "@/components/kids/link-parent-modal";
-import type { Parent, ParentRole, ParentStatus } from "@/lib/mock/children";
-import { buildNewParent } from "@/lib/mock/children";
+import { relationshipLabels, type ParentView } from "@/lib/data/invitation-labels";
 
 // Config de estado del padre: pill + texto de la meta.
 const parentStatusConfig: Record<
-  ParentStatus,
+  ParentView["status"],
   { label: string; bg: string; text: string; meta: string }
 > = {
   active: { label: "ACTIVA", bg: "#CFEBD8", text: "#3E9B6C", meta: "activa" },
@@ -38,8 +38,8 @@ function PlusIcon() {
   );
 }
 
-// Fila de un padre vinculado.
-function ParentRow({ parent }: { parent: Parent }) {
+// Fila de un padre vinculado (pendiente o activo) desde la BD.
+function ParentRow({ parent }: { parent: ParentView }) {
   const config = parentStatusConfig[parent.status];
   return (
     <div className="flex items-center gap-3">
@@ -47,7 +47,7 @@ function ParentRow({ parent }: { parent: Parent }) {
       <div className="min-w-0 flex-1">
         <div className="text-[14.5px] font-extrabold text-ink">{parent.name}</div>
         <div className="text-[12.5px] text-[#A89A8B]">
-          {parent.role} · {config.meta}
+          {relationshipLabels[parent.relationship]} · {config.meta}
         </div>
       </div>
       <span
@@ -61,20 +61,21 @@ function ParentRow({ parent }: { parent: Parent }) {
 }
 
 interface LinkedParentsCardProps {
-  parents: Parent[]; // lista original del mock (no se muta)
+  childId: string; // uuid del niño en BD
   childName: string; // "Mateo Fernández"
+  parents: ParentView[]; // invitaciones pendientes + padres activos (desde BD)
 }
 
-// Tarjeta "PADRES VINCULADOS" del perfil del niño.
-// Mantiene la lista en estado local (SPEC 05): los padres nuevos solo viven en memoria.
-export function LinkedParentsCard({ parents, childName }: LinkedParentsCardProps) {
-  const [linkedParents, setLinkedParents] = useState(parents);
+// Tarjeta "PADRES VINCULADOS" del perfil del niño (SPEC 10).
+// La lista llega desde el server (fetchLinkedParents) y, tras enviar una
+// invitación, router.refresh() la recarga desde la BD.
+export function LinkedParentsCard({
+  childId,
+  childName,
+  parents,
+}: LinkedParentsCardProps) {
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  function handleSubmit({ name, role }: { name: string; role: ParentRole }) {
-    setLinkedParents((current) => [...current, buildNewParent({ name, role })]);
-    setIsModalOpen(false);
-  }
 
   return (
     <div className="rounded-[16px] border border-border-warm bg-surface p-[16px_18px]">
@@ -82,8 +83,8 @@ export function LinkedParentsCard({ parents, childName }: LinkedParentsCardProps
         PADRES VINCULADOS
       </SectionLabel>
       <div className="flex flex-col gap-[14px]">
-        {linkedParents.map((parent) => (
-          <ParentRow key={parent.name} parent={parent} />
+        {parents.map((parent) => (
+          <ParentRow key={parent.id} parent={parent} />
         ))}
         <button
           type="button"
@@ -101,9 +102,13 @@ export function LinkedParentsCard({ parents, childName }: LinkedParentsCardProps
 
       {isModalOpen && (
         <LinkParentModal
+          childId={childId}
           childName={childName}
           onClose={() => setIsModalOpen(false)}
-          onSubmit={handleSubmit}
+          onSuccess={() => {
+            // Recarga la lista del server para que el pendiente aparezca.
+            router.refresh();
+          }}
         />
       )}
     </div>

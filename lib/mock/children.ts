@@ -299,18 +299,3 @@ export function buildNewChild(input: {
     parents: [],
   };
 }
-
-// Crea un Parent pendiente a partir del modal de vincular (SPEC 05).
-// El avatarBg deriva del rol para mantener la paleta del mock: Mamá #C9B6E8, Papá #A9C7E8.
-export function buildNewParent(input: {
-  name: string; // "Juan Pérez"
-  role: ParentRole; // "Mamá" | "Papá"
-}): Parent {
-  return {
-    name: input.name.trim(),
-    role: input.role,
-    status: "pending",
-    initial: input.name.trim().charAt(0).toUpperCase() || "?",
-    avatarBg: input.role === "Mamá" ? "#C9B6E8" : "#A9C7E8",
-  };
-}

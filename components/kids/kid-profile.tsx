@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
+import { LinkedParentsCard } from "@/components/kids/linked-parents-card";
 import type { ChildView } from "@/lib/data/children";
+import type { ParentView } from "@/lib/data/invitations";
 
 function ChevronLeftIcon() {
   return (
@@ -56,7 +58,13 @@ function SunIcon() {
 }
 
 // Perfil completo de un niño. Lo usa /kids/[id].
-export function KidProfile({ child }: { child: ChildView }) {
+export function KidProfile({
+  child,
+  parents,
+}: {
+  child: ChildView;
+  parents: ParentView[]; // invitaciones pendientes + padres activos (SPEC 10)
+}) {
   return (
     <div className="mx-auto max-w-[820px] px-5 pb-20 pt-16 md:px-10 md:pt-[34px]">
       {/* Volver a Niños */}
@@ -145,6 +153,13 @@ export function KidProfile({ child }: { child: ChildView }) {
             <SunIcon />
             Resumen del día
           </a>
+
+          {/* Padres vinculados (desde BD) */}
+          <LinkedParentsCard
+            childId={child.id}
+            childName={child.name}
+            parents={parents}
+          />
         </div>
       </div>
     </div>

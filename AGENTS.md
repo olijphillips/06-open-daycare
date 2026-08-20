@@ -59,6 +59,17 @@ Todos los cambios de base de datos se gestionan de forma local con la CLI de Sup
 - No editar migraciones ya aplicadas a un entorno remoto; crear una migración nueva para cualquier cambio posterior.
 - El flujo típico es: escribir migración local → probar en el stack local (`supabase start`) → empujar a remoto (`supabase db push`).
 
+### Agente db-migrator
+
+- `@db-migrator` (subagente en `.opencode/agent/db-migrator.md`): especialista en migraciones. Verifica que existan migraciones para los cambios de esquema y specs de BD, crea las faltantes en `supabase/migrations/` y las aplica (local con `supabase migration up`, remoto con `supabase db push` tras confirmación).
+- Comando `/db-migrate`: ejecuta el flujo completo de `db-migrator` directamente.
+- `/spec-impl` delega automáticamente en `@db-migrator` al final de la implementación cuando el spec toca la base de datos (ubicación `specs/database/` o keywords de BD en el spec).
+
+### Agente db-security-auditor
+
+- `@db-security-auditor` (subagente en `.opencode/agent/db-security-auditor.md`): auditor de seguridad de BD Supabase especializado en el modelo multi-tenant de la guardería. Detecta fugas de datos entre niños y padres por RLS mal configurado (p. ej. políticas `USING (true)` en `children`, `parent_children` o `invitations`), roles asignables por el usuario desde `raw_user_meta_data`, funciones `SECURITY DEFINER` inseguras, vistas que bypasean RLS y malas prácticas Postgres. Audita la BD real vía MCP y las migraciones locales de `supabase/migrations/`. Solo audita y reporta (no edita ni aplica); propone migraciones de corrección para que las aplique `@db-migrator` con confirmación.
+- Comando `/db-security-audit`: ejecuta el flujo completo de `db-security-auditor` directamente.
+
 ### Cliente de la app (Supabase)
 
 - Clientes de Supabase en `utils/supabase/`: `server.ts` (Server Components / Server Actions / Route Handlers), `client.ts` (navegador) y `middleware.ts` (helper de cookies para el proxy).
@@ -74,6 +85,10 @@ Todos los cambios de base de datos se gestionan de forma local con la CLI de Sup
 - /spec Usaremos esta habilidad para crear las especificaciones.
 - /spec-impl Usaremos esta habilidad para crear la implementación de las especificaciones.
 - Todo spec relacionado con tablas, base de datos o Supabase DEBE crearse dentro de `specs/database/`. Los specs de UI/features van en la raíz de `specs/`.
+
+## Accesibilidad
+
+- `@accessibility-checker` (subagente en `.opencode/agent/accessibility-checker.md`): audita la accesibilidad de los archivos indicados contra WCAG 2.2 AA o superior (semántica HTML/ARIA, labels, formularios, foco y contraste de color con los tokens del tema). Solo audita y reporta, no edita código. Invocar con `@accessibility-checker <archivo>`.
 
 ## Reglas de código
 

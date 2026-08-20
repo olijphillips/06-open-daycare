@@ -7,6 +7,7 @@ import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { MobileNav } from "@/components/layout/sidebar/mobile-nav";
 import { Sidebar } from "@/components/layout/sidebar/sidebar";
+import { Counter } from "@/components/ui/counter";
 import { SectionLabel } from "@/components/ui/section-label";
 import { classroom, getInitialPosts, getPosts, subscribe } from "@/lib/mock/feed";
 import { useSessionUser } from "@/lib/auth/use-session";
@@ -27,6 +28,8 @@ export default function Home() {
         />
 
         <ComposerTrigger />
+
+        <Counter initialValue={0} className="mb-6" />
 
         <div className="mb-[14px] flex items-center gap-[14px]">
           <SectionLabel className="text-[#8A7C6D]">PUBLICADO HOY</SectionLabel>

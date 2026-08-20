@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { PrimaryButton } from "@/components/ui/button";
 import { createChild } from "@/lib/actions/children";
@@ -10,12 +10,26 @@ interface AddChildModalProps {
   rooms: RoomView[]; // salas desde la BD (SPEC 09)
 }
 
+interface ChildFormErrors {
+  name?: string;
+  birthDate?: string;
+  server?: string;
+}
+
 // Aplica la máscara dd/mm/aaaa: inserta "/" mientras se escribe y acota a 10 chars.
 function maskDate(value: string): string {
   const digits = value.replace(/\D/g, "").slice(0, 8);
   if (digits.length <= 2) return digits;
   if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
   return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+}
+
+// "dd/mm/aaaa" → ¿fecha plausible? El rango evita fechas absurdas (99/99/9999).
+function isValidBirthDate(value: string): boolean {
+  if (value.length < 10) return false;
+  const [day, month, year] = value.split("/").map(Number);
+  if (!day || !month || !year) return false;
+  return year >= 1900 && year <= 2100 && month >= 1 && month <= 12 && day >= 1 && day <= 31;
 }
 
 // Icono "+" del CTA "Agregar niño".
@@ -41,35 +55,75 @@ function PlusIcon() {
 // que lo abre, por lo que /kids lo renderiza en el header.
 export function AddChildModal({ rooms }: AddChildModalProps) {
   const router = useRouter();
+  const dialogRef = useRef<HTMLFormElement | null>(null);
+  const nameRef = useRef<HTMLInputElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [roomId, setRoomId] = useState(rooms[0]?.id ?? "");
   const [allergies, setAllergies] = useState("");
   const [medicalNotes, setMedicalNotes] = useState("");
-  const [errors, setErrors] = useState<{
-    name?: string;
-    birthDate?: string;
-    server?: string;
-  }>({});
+  const [errors, setErrors] = useState<ChildFormErrors>({});
   const [submitting, setSubmitting] = useState(false);
 
-  function handleSubmit(event: FormEvent) {
+  // Gestión de foco, scroll del body y cierre con Escape mientras el modal está abierto.
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const dialogNode = dialogRef.current;
+    const previousActive = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    nameRef.current?.focus();
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setIsOpen(false);
+        return;
+      }
+      if (event.key !== "Tab" || !dialogNode) return;
+
+      const focusable = Array.from(
+        dialogNode.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+      previousActive?.focus();
+    };
+  }, [isOpen]);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const nextErrors: { name?: string; birthDate?: string } = {};
+    if (submitting) return;
+
+    const nextErrors: Pick<ChildFormErrors, "name" | "birthDate"> = {};
     if (!name.trim()) nextErrors.name = "Ingresa el nombre";
-    if (birthDate.length < 10) nextErrors.birthDate = "Ingresa la fecha completa";
+    if (!isValidBirthDate(birthDate)) nextErrors.birthDate = "Ingresa la fecha completa";
 
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
       return;
     }
     setErrors({});
-    void save();
-  }
 
-  async function save() {
-    if (submitting) return;
     setSubmitting(true);
     const result = await createChild({
       name,
@@ -94,10 +148,18 @@ export function AddChildModal({ rooms }: AddChildModalProps) {
       </PrimaryButton>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[rgba(63,54,46,0.35)] px-6 py-10">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="add-child-title"
+          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[rgba(63,54,46,0.35)] px-6 py-10"
+        >
           <form
+            ref={dialogRef}
             onSubmit={handleSubmit}
             noValidate
+            autoComplete="off"
+            tabIndex={-1}
             className="w-full max-w-[520px] overflow-hidden rounded-[24px] border border-[#ECE0D0] bg-[#FBF4EC] shadow-[0_20px_50px_-24px_rgba(63,54,46,0.45)]"
           >
             {/* Header */}
@@ -109,7 +171,10 @@ export function AddChildModal({ rooms }: AddChildModalProps) {
               >
                 Cancelar
               </button>
-              <span className="font-display text-[18px] font-semibold text-ink">
+              <span
+                id="add-child-title"
+                className="font-display text-[18px] font-semibold text-ink"
+              >
                 Agregar niño
               </span>
               <button
@@ -125,7 +190,10 @@ export function AddChildModal({ rooms }: AddChildModalProps) {
             <div className="px-[26px] py-6">
               {/* Error de servidor */}
               {errors.server && (
-                <p className="mb-[18px] rounded-[12px] bg-[#FBDAD6] px-4 py-3 text-[13px] font-bold text-[#C5413A]">
+                <p
+                  role="alert"
+                  className="mb-[18px] rounded-[12px] bg-[#FBDAD6] px-4 py-3 text-[13px] font-bold text-[#C5413A]"
+                >
                   {errors.server}
                 </p>
               )}
@@ -140,15 +208,20 @@ export function AddChildModal({ rooms }: AddChildModalProps) {
                 </label>
                 <input
                   id="child-name"
+                  ref={nameRef}
                   type="text"
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   placeholder="Ej. Martina López"
                   className="mb-[18px] w-full rounded-[14px] border-[1.5px] border-[#EADFD0] bg-white px-4 py-[13px] text-[15px] text-ink outline-none placeholder:text-[#B6A99B] focus:border-primary"
                   aria-invalid={Boolean(errors.name)}
+                  aria-describedby={errors.name ? "child-name-error" : undefined}
                 />
                 {errors.name && (
-                  <p className="-mt-[12px] mb-[18px] text-[12.5px] font-bold text-[#D9583C]">
+                  <p
+                    id="child-name-error"
+                    className="-mt-[12px] mb-[18px] text-[12.5px] font-bold text-[#D9583C]"
+                  >
                     {errors.name}
                   </p>
                 )}
@@ -172,9 +245,13 @@ export function AddChildModal({ rooms }: AddChildModalProps) {
                     placeholder="dd/mm/aaaa"
                     className="mb-[18px] w-full rounded-[14px] border-[1.5px] border-[#EADFD0] bg-white px-4 py-[13px] text-[15px] text-ink outline-none placeholder:text-[#B6A99B] focus:border-primary"
                     aria-invalid={Boolean(errors.birthDate)}
+                    aria-describedby={errors.birthDate ? "child-birthdate-error" : undefined}
                   />
                   {errors.birthDate && (
-                    <p className="-mt-[12px] mb-[18px] text-[12.5px] font-bold text-[#D9583C]">
+                    <p
+                      id="child-birthdate-error"
+                      className="-mt-[12px] mb-[18px] text-[12.5px] font-bold text-[#D9583C]"
+                    >
                       {errors.birthDate}
                     </p>
                   )}

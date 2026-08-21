@@ -100,8 +100,8 @@ export async function activateAccount(
     return mapValidationError(acceptError.message ?? "");
   }
 
-  revalidatePath("/");
-  redirect("/");
+  revalidatePath("/familia");
+  redirect("/familia");
 }
 
 // Traduce los errores de las RPC a mensajes inline en español.

@@ -4,7 +4,8 @@
 
 export interface SessionUser {
   name: string; // "Nadia García"
-  role: string; // "Admin · Soles" (etiqueta traducida + sala)
+  role: UserRole; // "staff" | "parent" | "admin" — rol crudo (en inglés, convención DB)
+  roleLabel: string; // "Admin · Soles" (etiqueta traducida + sala)
   initial: string; // "N"
   avatarBg: string; // color derivado de la paleta del mock
 }
@@ -55,7 +56,8 @@ export function buildProfile(input: {
   const name = input.fullName.trim();
   return {
     name,
-    role: `${roleLabels[input.role]} · ${salaName(input.daycareName)}`,
+    role: input.role,
+    roleLabel: `${roleLabels[input.role]} · ${salaName(input.daycareName)}`,
     initial: name.charAt(0).toUpperCase(),
     avatarBg: avatarColorFor(name),
   };

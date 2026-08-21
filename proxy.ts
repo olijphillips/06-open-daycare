@@ -14,9 +14,12 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isProtected =
     pathname === "/" ||
-    pathname === "/kids" ||
-    pathname.startsWith("/kids/") ||
-    pathname === "/crear-publicacion";
+    pathname === "/staff" ||
+    pathname.startsWith("/staff/") ||
+    pathname === "/familia" ||
+    pathname.startsWith("/familia/") ||
+    pathname === "/posts" ||
+    pathname.startsWith("/posts/");
 
   if (!user && isProtected) {
     const url = request.nextUrl.clone();

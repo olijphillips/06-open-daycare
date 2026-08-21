@@ -114,8 +114,8 @@ export async function sendInvitation(
       return { ok: false, error: emailError ?? "No se pudo enviar el correo." };
     }
 
-    revalidatePath("/kids");
-    revalidatePath(`/kids/${input.childId}`);
+    revalidatePath("/staff/kids");
+    revalidatePath(`/staff/kids/${input.childId}`);
     return { ok: true, code, expiresAt: expiresAt.toISOString() };
   }
 

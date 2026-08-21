@@ -69,7 +69,7 @@ export function KidProfile({
     <div className="mx-auto max-w-[820px] px-5 pb-20 pt-16 md:px-10 md:pt-[34px]">
       {/* Volver a Niños */}
       <Link
-        href="/kids"
+        href="/staff/kids"
         className="mb-5 flex items-center gap-[7px] text-[14px] font-bold text-muted"
       >
         <ChevronLeftIcon />

@@ -1,8 +1,5 @@
 import { notFound } from "next/navigation";
 import { KidProfile } from "@/components/kids/kid-profile";
-import { AppShell } from "@/components/layout/app-shell";
-import { MobileNav } from "@/components/layout/sidebar/mobile-nav";
-import { Sidebar } from "@/components/layout/sidebar/sidebar";
 import { fetchChildById } from "@/lib/data/children";
 import { fetchLinkedParents } from "@/lib/data/invitations";
 
@@ -20,16 +17,5 @@ export default async function KidsProfilePage({
 
   const parents = await fetchLinkedParents(id);
 
-  return (
-    <AppShell
-      sidebar={
-        <>
-          <Sidebar activeItem="Niños" />
-          <MobileNav activeItem="Niños" />
-        </>
-      }
-    >
-      <KidProfile child={child} parents={parents} />
-    </AppShell>
-  );
+  return <KidProfile child={child} parents={parents} />;
 }

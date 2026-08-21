@@ -12,7 +12,7 @@ export function ComposerTrigger() {
 
   return (
     <Link
-      href="/crear-publicacion"
+      href="/staff/crear-publicacion"
       className="mb-6 flex items-center gap-[14px] rounded-[18px] border border-border-warm bg-surface px-[18px] py-[14px] shadow-[0_4px_14px_-10px_rgba(120,90,60,0.4)]"
     >
       <Avatar

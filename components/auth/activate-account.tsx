@@ -85,8 +85,8 @@ export function ActivateAccount({ code }: { code?: string }) {
       return;
     }
 
-    // Tras activar la cuenta quedó sesión activa → ir al feed.
-    router.push("/");
+    // Tras activar la cuenta quedó sesión activa → ir al panel familia.
+    router.push("/familia");
     router.refresh();
   }
 

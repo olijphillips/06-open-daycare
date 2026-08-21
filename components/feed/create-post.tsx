@@ -200,7 +200,7 @@ export function CreatePost() {
     };
 
     addPost(post);
-    router.push("/");
+    router.push("/staff");
   }
 
   return (
@@ -210,7 +210,7 @@ export function CreatePost() {
         <div className="flex items-center justify-between border-b border-[#ECE0D0] px-[26px] py-5">
           <button
             type="button"
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/staff")}
             className="text-[15px] font-bold text-[#94887B]"
           >
             Cancelar

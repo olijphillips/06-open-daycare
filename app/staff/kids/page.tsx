@@ -1,9 +1,6 @@
 import { cookies } from "next/headers";
 import { KidCard } from "@/components/kids/kid-card";
 import { AddChildModal } from "@/components/kids/add-child-modal";
-import { AppShell } from "@/components/layout/app-shell";
-import { MobileNav } from "@/components/layout/sidebar/mobile-nav";
-import { Sidebar } from "@/components/layout/sidebar/sidebar";
 import { SectionLabel } from "@/components/ui/section-label";
 import { buildChildView } from "@/lib/data/children";
 import type { ChildRow, ChildView, RoomView } from "@/lib/data/children";
@@ -55,15 +52,7 @@ export default async function KidsPage() {
   );
 
   return (
-    <AppShell
-      sidebar={
-        <>
-          <Sidebar activeItem="Niños" />
-          <MobileNav activeItem="Niños" />
-        </>
-      }
-    >
-      <div className="mx-auto max-w-[880px] px-5 pb-20 pt-16 md:px-10 md:pt-[34px]">
+    <div className="mx-auto max-w-[880px] px-5 pb-20 pt-16 md:px-10 md:pt-[34px]">
         {/* Header */}
         <div className="mb-[22px] flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -116,6 +105,5 @@ export default async function KidsPage() {
           );
         })}
       </div>
-    </AppShell>
   );
 }

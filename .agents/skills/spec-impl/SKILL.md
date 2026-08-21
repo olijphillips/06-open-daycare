@@ -210,6 +210,21 @@ If they all pass, update the spec's state to "Implemented" (or the equivalent
 in your repo's language) and make the final commit before merging this branch.
 ```
 
+### Detect if the spec touches the database (delegate to db-migrator)
+
+When the last step is complete, determine whether the implemented spec affects the database:
+
+- **Location**: the spec lives in `specs/database/`, OR
+- **Keywords**: the spec's objective/scope/implementation plan mention SQL, table, column, migration, schema, RLS, trigger, function, enum, index, policy, or Supabase.
+
+If the spec touches the database:
+
+1. Delegate to the `db-migrator` subagent (Task tool with `subagent_type: db-migrator`).
+2. Give it the implemented spec context and ask it to verify that the schema changes have a migration in `supabase/migrations/`, create any missing ones, and apply them locally (and on remote only after explicit user confirmation).
+3. Wait for its report before continuing. Do not skip it and do not apply migrations yourself.
+
+If the spec does not touch the database, continue directly to the acceptance criteria verification.
+
 ---
 
 ## Summary of expected behavior

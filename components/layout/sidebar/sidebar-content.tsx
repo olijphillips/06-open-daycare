@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState, type ComponentType } from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { PrimaryButton } from "@/components/ui/button";
 import { classroom } from "@/lib/mock/feed";
@@ -127,27 +129,46 @@ function LogoutIcon() {
 
 export type NavLabel = "Feed" | "Niños" | "Avisos" | "Mi cuenta";
 
-const navItems = [
-  { label: "Feed", href: "/", icon: <HomeIcon /> },
-  { label: "Niños", href: "/kids", icon: <ChildrenIcon /> },
-  { label: "Avisos", href: "#", icon: <BellIcon /> },
-  { label: "Mi cuenta", href: "#", icon: <UserIcon /> },
+type NavItem = {
+  label: NavLabel;
+  href: string;
+  icon: ComponentType;
+};
+
+const navItems: NavItem[] = [
+  { label: "Feed", href: "/", icon: HomeIcon },
+  { label: "Niños", href: "/kids", icon: ChildrenIcon },
+  { label: "Avisos", href: "#", icon: BellIcon },
+  { label: "Mi cuenta", href: "#", icon: UserIcon },
 ];
 
+// Detecta el ítem activo por la ruta actual (fallback "Feed" como el default previo).
+function getActiveLabel(pathname: string): NavLabel {
+  const active = navItems.find(
+    (item) =>
+      item.href.startsWith("/") &&
+      (item.href === "/" ? pathname === "/" : pathname.startsWith(item.href))
+  );
+  return active?.label ?? "Feed";
+}
+
 // Contenido del sidebar (variante Maestra). Se reutiliza en desktop y drawer mobile.
-// activeItem marca el ítem de nav activo (default "Feed" para no romper la home).
+// activeItem sobreescribe la detección automática por ruta (usePathname).
 export function SidebarContent({
-  activeItem = "Feed",
+  activeItem: activeItemProp,
 }: {
   activeItem?: NavLabel;
 }) {
+  const pathname = usePathname();
   const user = useSessionUser();
-  const supabase = createClient();
+  // Cliente Supabase estable: se crea una sola vez por montaje.
+  const [supabase] = useState(createClient);
+  const activeItem = activeItemProp ?? getActiveLabel(pathname);
   if (!user) return null;
 
   // Cierra la sesión real; el SessionProvider redirige a /login en SIGNED_OUT.
   function handleSignOut() {
-    supabase.auth.signOut();
+    void supabase.auth.signOut();
   }
 
   return (
@@ -180,21 +201,32 @@ export function SidebarContent({
       </PrimaryButton>
 
       {/* Navegación */}
-      <nav className="flex flex-1 flex-col gap-1">
+      <nav aria-label="Navegación principal" className="flex flex-1 flex-col gap-1">
         {navItems.map((item) => {
+          const isActive = item.label === activeItem;
           const className = `flex items-center gap-3 rounded-[12px] px-3 py-[11px] text-[14.5px] ${
-            item.label === activeItem
+            isActive
               ? "bg-primary-soft font-extrabold text-accent"
               : "font-semibold text-[#6E6359]"
           }`;
           return item.href.startsWith("/") ? (
-            <Link key={item.label} href={item.href} className={className}>
-              {item.icon}
+            <Link
+              key={item.label}
+              href={item.href}
+              className={className}
+              aria-current={isActive ? "page" : undefined}
+            >
+              <item.icon />
               {item.label}
             </Link>
           ) : (
-            <a key={item.label} href={item.href} className={className}>
-              {item.icon}
+            <a
+              key={item.label}
+              href={item.href}
+              className={className}
+              aria-current={isActive ? "page" : undefined}
+            >
+              <item.icon />
               {item.label}
             </a>
           );

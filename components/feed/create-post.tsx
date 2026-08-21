@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type DragEvent } from "react";
+import { useEffect, useRef, useState, type DragEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { FeedPost, PostType } from "@/lib/mock/feed";
 import { addPost, composerTypeConfig } from "@/lib/mock/feed";
@@ -69,6 +69,20 @@ export function CreatePost() {
   const [description, setDescription] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
+
+  // Ref con las URLs de preview vigentes para revocarlas al desmontar.
+  const photoUrlsRef = useRef<string[]>([]);
+
+  useEffect(() => {
+    photoUrlsRef.current = photos;
+  }, [photos]);
+
+  // Libera las URLs de objeto creadas con URL.createObjectURL al desmontar.
+  useEffect(() => {
+    return () => {
+      photoUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
 
   const hasRecipient = isAllSelected || selectedSlugs.length > 0;
   const canPublish = hasRecipient && description.trim().length > 0;
@@ -288,6 +302,7 @@ export function CreatePost() {
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             placeholder="Contá cómo le fue hoy…"
+            aria-label="Descripción"
             className="mb-[22px] min-h-[120px] w-full resize-y rounded-[14px] border-[1.5px] border-[#EADFD0] bg-white px-4 py-[14px] text-[15px] leading-[1.5] text-ink outline-none placeholder:text-[#B6A99B] focus:border-primary"
           />
 
